@@ -90,16 +90,28 @@
                     <dl>
                         <div><dt>Jumlah item</dt><dd>{{ $items->sum('jumlah') }} jas</dd></div>
                         <div><dt>Total sewa</dt><dd>Rp {{ number_format($total, 0, ',', '.') }}</dd></div>
+                        <div><dt>Deposit jaminan</dt><dd>Rp 100.000</dd></div>
                     </dl>
-                    <p class="summary-note">Harga dihitung otomatis berdasarkan durasi sewa dan jumlah jas. Setiap item akan menjadi satu pesanan.</p>
+                    <p class="summary-note">
+                        Harga dihitung otomatis berdasarkan durasi sewa dan jumlah jas. Setiap item akan menjadi satu pesanan.
+                        Deposit jaminan dibayar di toko dan dikembalikan setelah jas kembali dalam kondisi baik (tidak termasuk total sewa).
+                    </p>
 
                     <form method="POST" action="{{ route('checkout') }}" class="form">
                         @csrf
                         <div class="field">
+                            <label for="nama_pemesan">Nama pemesan</label>
+                            <input id="nama_pemesan" name="nama_pemesan" value="{{ old('nama_pemesan', auth()->user()->name) }}" maxlength="100" required>
+                        </div>
+                        <div class="field">
+                            <label for="nomor_hp">Nomor HP</label>
+                            <input id="nomor_hp" name="nomor_hp" value="{{ old('nomor_hp', auth()->user()->nomor_hp) }}" inputmode="numeric" placeholder="08xxxxxxxxxx" required>
+                        </div>
+                        <div class="field">
                             <label for="catatan">Catatan untuk admin <span class="optional">(opsional)</span></label>
                             <textarea id="catatan" name="catatan" rows="3" maxlength="500" placeholder="Contoh: ambil jas jam 14.00">{{ old('catatan') }}</textarea>
                         </div>
-                        <button class="btn btn-primary btn-block btn-lg" type="submit">Checkout Sekarang</button>
+                        <button class="btn btn-primary btn-block btn-lg" type="submit">Kirim Pesanan</button>
                     </form>
 
                     <div class="summary-contact">

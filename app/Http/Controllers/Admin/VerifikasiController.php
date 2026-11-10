@@ -40,12 +40,12 @@ class VerifikasiController extends Controller
             ]);
 
             $pembayaran->pesanan->update([
-                'status' => StatusPesanan::Disetujui,
+                'status' => StatusPesanan::Disewa,
                 'admin_id' => auth()->id(),
             ]);
         });
 
-        return back()->with('sukses', 'Pembayaran berhasil diverifikasi. Pesanan siap diserahkan.');
+        return back()->with('sukses', 'Pembayaran berhasil diverifikasi. Pesanan sekarang berstatus Disewa.');
     }
 
     public function tolak(TolakPembayaranRequest $request, Pembayaran $pembayaran): RedirectResponse

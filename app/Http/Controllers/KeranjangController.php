@@ -80,8 +80,8 @@ class KeranjangController extends Controller
         }
 
         try {
-            $jumlahPesanan = DB::transaction(function () use ($items, $request) {
-                $n = 0;
+            $pesananBaru = DB::transaction(function () use ($items, $request) {
+                $dibuat = collect();
 
                 foreach ($items as $item) {
                     /** @var Jas $jas */
@@ -95,9 +95,11 @@ class KeranjangController extends Controller
                         throw new \RuntimeException("Stok {$jas->nama} tidak mencukupi. Sisa {$jas->stok}.");
                     }
 
-                    Pesanan::create([
+                    $pesanan = Pesanan::create([
                         'user_id' => $request->user()->id,
                         'jas_id' => $jas->id,
+                        'nama_pemesan' => $request->string('nama_pemesan')->trim()->toString(),
+                        'nomor_hp' => $request->string('nomor_hp')->trim()->toString(),
                         'tanggal_pesan' => today(),
                         'tanggal_mulai' => $item->tanggal_mulai,
                         'tanggal_selesai' => $item->tanggal_selesai,
@@ -109,18 +111,24 @@ class KeranjangController extends Controller
                     ]);
 
                     $jas->decrement('stok', $item->jumlah);
-                    $n++;
+                    $dibuat->push($pesanan);
                 }
 
                 Keranjang::where('user_id', $request->user()->id)->delete();
 
-                return $n;
+                return $dibuat;
             });
         } catch (\RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         }
 
+        // Satu pesanan: langsung tampilkan nota/detail dengan tombol "Bayar Sekarang".
+        if ($pesananBaru->count() === 1) {
+            return redirect()->route('pesanan.show', $pesananBaru->first())
+                ->with('sukses', 'Pesanan berhasil dibuat. Silakan periksa nota lalu lanjut ke pembayaran.');
+        }
+
         return redirect()->route('pesanan.index')
-            ->with('sukses', "{$jumlahPesanan} pesanan berhasil dibuat. Silakan lakukan pembayaran.");
+            ->with('sukses', $pesananBaru->count().' pesanan berhasil dibuat. Silakan pilih pesanan dan lakukan pembayaran.');
     }
 }

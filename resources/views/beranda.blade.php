@@ -54,7 +54,47 @@
         </div>
         <div class="feature-item">
             <span class="feature-icon">&#128179;</span>
-            <div><strong>Bayar mudah</strong><p>Transfer, QRIS, atau cash di toko.</p></div>
+            <div><strong>Bayar mudah</strong><p>QRIS atau cash di toko.</p></div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="momen">
+    <div class="container">
+        <div class="section-head center">
+            <div>
+                <span class="eyebrow">Lima momen spesial</span>
+                <h2>Tampil terbaik di setiap kesempatan</h2>
+                <p class="section-sub">Dari hari besar sampai acara kantor, pilih jas yang paling sesuai dengan momenmu.</p>
+            </div>
+        </div>
+
+        <div class="moment-grid">
+            <article class="moment-card">
+                <span class="moment-icon" aria-hidden="true">&#128141;</span>
+                <h3>Pernikahan</h3>
+                <p>Jas pengantin dan tuxedo premium untuk akad maupun resepsi.</p>
+            </article>
+            <article class="moment-card">
+                <span class="moment-icon" aria-hidden="true">&#128150;</span>
+                <h3>Lamaran</h3>
+                <p>Tampil rapi dan berkesan saat momen istimewa bersama pasangan.</p>
+            </article>
+            <article class="moment-card">
+                <span class="moment-icon" aria-hidden="true">&#127891;</span>
+                <h3>Wisuda</h3>
+                <p>Jas wisuda bersih dan nyaman untuk foto serta prosesi kelulusan.</p>
+            </article>
+            <article class="moment-card">
+                <span class="moment-icon" aria-hidden="true">&#128188;</span>
+                <h3>Formal &amp; Kantor</h3>
+                <p>Potongan profesional untuk wawancara, seminar, dan acara resmi.</p>
+            </article>
+            <article class="moment-card">
+                <span class="moment-icon" aria-hidden="true">&#127881;</span>
+                <h3>Prom &amp; Pesta</h3>
+                <p>Gaya kasual elegan agar tampil percaya diri di acara malam.</p>
+            </article>
         </div>
     </div>
 </section>
@@ -135,7 +175,7 @@
             <article class="step">
                 <span class="step-number">03</span>
                 <h3>Bayar</h3>
-                <p>Transfer, QRIS, atau bayar cash. Unggah bukti jika diperlukan.</p>
+                <p>Bayar dengan QRIS atau cash di toko. Unggah bukti untuk QRIS.</p>
             </article>
             <article class="step">
                 <span class="step-number">04</span>
@@ -188,6 +228,54 @@
     </div>
 </section>
 
+<section class="section section-cream" id="kontak">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Kunjungi kami</span>
+                <h2>Lokasi &amp; Kontak</h2>
+                <p class="section-sub">Silakan datang langsung ke toko atau hubungi kami untuk konsultasi ukuran dan jadwal sewa.</p>
+            </div>
+            <a class="text-link" href="https://wa.me/6281234567890" target="_blank" rel="noopener">Chat WhatsApp &rarr;</a>
+        </div>
+
+        <div class="contact-grid">
+            <div class="contact-card">
+                <h3>PW_SEWAJAS Tanjungpinang</h3>
+                <ul class="contact-list">
+                    <li>
+                        <span>Alamat</span>
+                        Jl. Merdeka No. 21, Tanjungpinang, Kepulauan Riau
+                    </li>
+                    <li>
+                        <span>WhatsApp</span>
+                        <a href="https://wa.me/6281234567890" target="_blank" rel="noopener">0812-3456-7890</a>
+                    </li>
+                    <li>
+                        <span>Email</span>
+                        <a href="mailto:halo@sewajas.test">halo@sewajas.test</a>
+                    </li>
+                    <li>
+                        <span>Jam Buka</span>
+                        Senin&ndash;Sabtu, 09.00&ndash;20.00 WIB
+                    </li>
+                    <li>
+                        <span>Catatan</span>
+                        Pesanan online dapat diambil di toko setelah pembayaran diverifikasi admin.
+                    </li>
+                </ul>
+            </div>
+
+            <a class="contact-map" href="https://www.google.com/maps/search/?api=1&amp;query=Tanjungpinang" target="_blank" rel="noopener">
+                <span class="contact-map-icon" aria-hidden="true">&#128205;</span>
+                <strong>Temukan kami di peta</strong>
+                <p>Klik untuk membuka lokasi PW_SEWAJAS di Google Maps.</p>
+                <span class="btn btn-outline btn-sm">Buka Google Maps</span>
+            </a>
+        </div>
+    </div>
+</section>
+
 <section class="section" id="faq">
     <div class="container faq-grid">
         <div>
@@ -203,7 +291,7 @@
             </details>
             <details>
                 <summary>Bagaimana cara membayar?</summary>
-                <p>Kami menerima transfer bank, QRIS, dan cash di toko. Untuk transfer/QRIS, unggah bukti pembayaran melalui halaman pesanan.</p>
+                <p>Kami menerima QRIS dan cash di toko. Untuk QRIS, unggah bukti pembayaran melalui halaman pesanan.</p>
             </details>
             <details>
                 <summary>Apakah jas sudah bersih?</summary>

@@ -81,7 +81,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Pesanan
     Route::get('/pesanan', [Admin\PesananController::class, 'index'])->name('pesanan.index');
     Route::get('/pesanan/{pesanan}', [Admin\PesananController::class, 'show'])->name('pesanan.show');
-    Route::post('/pesanan/{pesanan}/kirim', [Admin\PesananController::class, 'kirim'])->name('pesanan.kirim');
     Route::post('/pesanan/{pesanan}/selesai', [Admin\PesananController::class, 'selesai'])->name('pesanan.selesai');
     Route::post('/pesanan/{pesanan}/batal', [Admin\PesananController::class, 'batal'])->name('pesanan.batal');
 

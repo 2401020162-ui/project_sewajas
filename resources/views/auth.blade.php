@@ -17,7 +17,7 @@
                 <ul class="auth-benefits">
                     <li>Koleksi jas bersih dan siap pakai</li>
                     <li>Pesan online, ambil di toko</li>
-                    <li>Pembayaran transfer, QRIS, atau cash</li>
+                    <li>Pembayaran QRIS atau cash di toko</li>
                 </ul>
             </div>
 

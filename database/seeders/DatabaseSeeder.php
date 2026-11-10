@@ -131,7 +131,9 @@ class DatabaseSeeder extends Seeder
             $pesanan = Pesanan::create([
                 'user_id' => $user->id,
                 'jas_id' => $item->id,
-                'admin_id' => in_array($status, [StatusPesanan::Disetujui, StatusPesanan::Dikirim, StatusPesanan::Selesai], true) ? $admin->id : null,
+                'admin_id' => in_array($status, [StatusPesanan::Disewa, StatusPesanan::Selesai], true) ? $admin->id : null,
+                'nama_pemesan' => $user->name,
+                'nomor_hp' => $user->nomor_hp,
                 'tanggal_pesan' => $mulai->copy()->subDays(2),
                 'tanggal_mulai' => $mulai,
                 'tanggal_selesai' => $selesai,
@@ -141,18 +143,19 @@ class DatabaseSeeder extends Seeder
                 'total_harga' => $item->harga_sewa * $jumlah * 2,
                 'status' => $status,
                 'catatan' => null,
+                'catatan_pengembalian' => $status === StatusPesanan::Selesai ? 'Jas dikembalikan dalam kondisi bersih dan lengkap.' : null,
             ]);
 
             if ($statusBayar) {
                 Pembayaran::create([
                     'pesanan_id' => $pesanan->id,
-                    'metode' => $metode ?? MetodePembayaran::Transfer,
+                    'metode' => $metode ?? MetodePembayaran::Qris,
                     'bukti_pembayaran' => null,
                     'status' => $statusBayar,
-                    'tanggal_bayar' => $mulai->copy()->subDay(),
+                    'tanggal_bayar' => ($metode ?? MetodePembayaran::Qris) === MetodePembayaran::Cash ? null : $mulai->copy()->subDay(),
                     'tanggal_verifikasi' => $statusBayar === StatusPembayaran::Diverifikasi ? $mulai->copy()->subDay() : null,
                     'diverifikasi_oleh' => $statusBayar === StatusPembayaran::Diverifikasi ? $admin->id : null,
-                    'catatan_admin' => $statusBayar === StatusPembayaran::Ditolak ? 'Bukti transfer tidak terbaca, silakan unggah ulang.' : null,
+                    'catatan_admin' => $statusBayar === StatusPembayaran::Ditolak ? 'Bukti QRIS tidak terbaca, silakan unggah ulang.' : null,
                 ]);
             }
 
@@ -162,9 +165,9 @@ class DatabaseSeeder extends Seeder
         $selesai1 = $buatPesanan($budi, $jas[2], StatusPesanan::Selesai, now()->subDays(20), 1, 'L', StatusPembayaran::Diverifikasi);
         $selesai2 = $buatPesanan($budi, $jas[4], StatusPesanan::Selesai, now()->subDays(12), 1, 'M', StatusPembayaran::Diverifikasi);
 
-        $buatPesanan($budi, $jas[0], StatusPesanan::Dikirim, now()->subDay(), 1, 'L', StatusPembayaran::Diverifikasi);
-        $buatPesanan($budi, $jas[6], StatusPesanan::Pending, now()->addDays(3), 1, 'M', StatusPembayaran::Pending);
-        $buatPesanan($siti, $jas[1], StatusPesanan::Disetujui, now()->addDays(5), 1, 'S', StatusPembayaran::Diverifikasi);
+        $buatPesanan($budi, $jas[0], StatusPesanan::Disewa, now()->subDay(), 1, 'L', StatusPembayaran::Diverifikasi);
+        $buatPesanan($budi, $jas[6], StatusPesanan::MenungguVerifikasi, now()->addDays(3), 1, 'M', StatusPembayaran::Pending);
+        $buatPesanan($siti, $jas[1], StatusPesanan::Disewa, now()->addDays(5), 1, 'S', StatusPembayaran::Diverifikasi, MetodePembayaran::Cash);
         $buatPesanan($siti, $jas[7], StatusPesanan::Pending, now()->addDays(7), 1, 'L');
         $buatPesanan($siti, $jas[3], StatusPesanan::Dibatalkan, now()->subDays(5), 1, 'M', StatusPembayaran::Ditolak);
 

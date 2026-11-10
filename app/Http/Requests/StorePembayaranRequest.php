@@ -19,7 +19,7 @@ class StorePembayaranRequest extends FormRequest
             'metode' => ['required', Rule::enum(MetodePembayaran::class)],
             'bukti_pembayaran' => [
                 'nullable',
-                'required_if:metode,transfer,qris',
+                'required_if:metode,qris',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'max:2048',
@@ -31,7 +31,7 @@ class StorePembayaranRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'bukti_pembayaran.required_if' => 'Bukti pembayaran wajib diunggah untuk metode transfer atau QRIS.',
+            'bukti_pembayaran.required_if' => 'Bukti pembayaran wajib diunggah untuk metode QRIS.',
             'bukti_pembayaran.image' => 'Bukti pembayaran harus berupa gambar.',
             'bukti_pembayaran.max' => 'Ukuran bukti pembayaran maksimal 2 MB.',
         ];

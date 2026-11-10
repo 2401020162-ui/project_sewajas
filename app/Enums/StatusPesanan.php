@@ -5,8 +5,8 @@ namespace App\Enums;
 enum StatusPesanan: string
 {
     case Pending = 'pending';
-    case Disetujui = 'disetujui';
-    case Dikirim = 'dikirim';
+    case MenungguVerifikasi = 'menunggu_verifikasi';
+    case Disewa = 'disewa';
     case Selesai = 'selesai';
     case Dibatalkan = 'dibatalkan';
 
@@ -14,8 +14,8 @@ enum StatusPesanan: string
     {
         return match ($this) {
             self::Pending => 'Menunggu Pembayaran',
-            self::Disetujui => 'Pembayaran Disetujui',
-            self::Dikirim => 'Sedang Disewa',
+            self::MenungguVerifikasi => 'Menunggu Verifikasi',
+            self::Disewa => 'Disewa',
             self::Selesai => 'Selesai',
             self::Dibatalkan => 'Dibatalkan',
         };
@@ -25,8 +25,8 @@ enum StatusPesanan: string
     {
         return match ($this) {
             self::Pending => 'warning',
-            self::Disetujui => 'info',
-            self::Dikirim => 'primary',
+            self::MenungguVerifikasi => 'info',
+            self::Disewa => 'primary',
             self::Selesai => 'success',
             self::Dibatalkan => 'danger',
         };
@@ -35,13 +35,13 @@ enum StatusPesanan: string
     /** Status yang stoknya masih "terpakai" (belum kembali). */
     public function stokTerpakai(): bool
     {
-        return in_array($this, [self::Pending, self::Disetujui, self::Dikirim], true);
+        return in_array($this, [self::Pending, self::MenungguVerifikasi, self::Disewa], true);
     }
 
-    /** Status yang masih boleh dibatalkan customer/admin. */
+    /** Status yang masih boleh dibatalkan customer/admin (belum Disewa). */
     public function bisaDibatalkan(): bool
     {
-        return in_array($this, [self::Pending, self::Disetujui], true);
+        return in_array($this, [self::Pending, self::MenungguVerifikasi], true);
     }
 
     public static function values(): array

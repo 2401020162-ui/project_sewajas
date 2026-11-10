@@ -71,15 +71,10 @@
                             <div class="table-actions">
                                 <a class="btn btn-outline btn-xs" href="{{ route('admin.pesanan.show', $item) }}">Detail</a>
 
-                                @if($item->status === \App\Enums\StatusPesanan::Disetujui)
-                                    <form method="POST" action="{{ route('admin.pesanan.kirim', $item) }}" onsubmit="return confirm('Tandai pesanan ini sedang disewa/dikirim?')">
-                                        @csrf
-                                        <button class="btn btn-primary btn-xs" type="submit">Kirim</button>
-                                    </form>
-                                @elseif($item->status === \App\Enums\StatusPesanan::Dikirim)
+                                @if($item->status === \App\Enums\StatusPesanan::Disewa)
                                     <form method="POST" action="{{ route('admin.pesanan.selesai', $item) }}" onsubmit="return confirm('Tandai jas sudah dikembalikan dan selesaikan pesanan?')">
                                         @csrf
-                                        <button class="btn btn-primary btn-xs" type="submit">Selesai</button>
+                                        <button class="btn btn-primary btn-xs" type="submit">Tandai Kembali</button>
                                     </form>
                                 @endif
 

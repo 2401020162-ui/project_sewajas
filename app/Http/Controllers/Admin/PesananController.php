@@ -40,30 +40,21 @@ class PesananController extends Controller
         return view('admin.pesanan.show', compact('pesanan'));
     }
 
-    public function kirim(Pesanan $pesanan): RedirectResponse
+    public function selesai(Request $request, Pesanan $pesanan): RedirectResponse
     {
-        if ($pesanan->status !== StatusPesanan::Disetujui) {
-            return back()->with('error', 'Hanya pesanan yang pembayarannya sudah disetujui yang dapat dikirim.');
+        if ($pesanan->status !== StatusPesanan::Disewa) {
+            return back()->with('error', 'Hanya pesanan yang berstatus Disewa yang dapat ditandai dikembalikan.');
         }
 
-        $pesanan->update([
-            'status' => StatusPesanan::Dikirim,
-            'admin_id' => auth()->id(),
-        ]);
+        $data = $request->validate([
+            'catatan_pengembalian' => ['nullable', 'string', 'max:500'],
+        ], [], ['catatan_pengembalian' => 'catatan kondisi pengembalian']);
 
-        return back()->with('sukses', 'Pesanan ditandai sedang disewa/dikirim.');
-    }
-
-    public function selesai(Pesanan $pesanan): RedirectResponse
-    {
-        if ($pesanan->status !== StatusPesanan::Dikirim) {
-            return back()->with('error', 'Hanya pesanan yang sedang disewa yang dapat diselesaikan.');
-        }
-
-        DB::transaction(function () use ($pesanan) {
+        DB::transaction(function () use ($pesanan, $data) {
             $pesanan->update([
                 'status' => StatusPesanan::Selesai,
                 'tanggal_dikembalikan' => today(),
+                'catatan_pengembalian' => $data['catatan_pengembalian'] ?? null,
                 'admin_id' => auth()->id(),
             ]);
 

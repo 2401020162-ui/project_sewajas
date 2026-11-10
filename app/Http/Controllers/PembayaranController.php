@@ -8,6 +8,7 @@ use App\Enums\StatusPesanan;
 use App\Http\Requests\StorePembayaranRequest;
 use App\Models\Pesanan;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -56,20 +57,29 @@ class PembayaranController extends Controller
             $bukti = $request->file('bukti_pembayaran')->store('bukti-pembayaran', 'public');
         }
 
-        $pesanan->pembayaran()->updateOrCreate(
-            ['pesanan_id' => $pesanan->id],
-            [
-                'metode' => $metode,
-                'bukti_pembayaran' => $metode->butuhBukti() ? $bukti : null,
-                'status' => StatusPembayaran::Pending,
-                'tanggal_bayar' => $request->input('tanggal_bayar') ?? now(),
-                'tanggal_verifikasi' => null,
-                'diverifikasi_oleh' => null,
-                'catatan_admin' => null,
-            ]
-        );
+        DB::transaction(function () use ($pesanan, $metode, $bukti, $request) {
+            $pesanan->pembayaran()->updateOrCreate(
+                ['pesanan_id' => $pesanan->id],
+                [
+                    'metode' => $metode,
+                    'bukti_pembayaran' => $metode->butuhBukti() ? $bukti : null,
+                    'status' => StatusPembayaran::Pending,
+                    'tanggal_bayar' => $metode->butuhBukti()
+                        ? ($request->input('tanggal_bayar') ?? now())
+                        : null,
+                    'tanggal_verifikasi' => null,
+                    'diverifikasi_oleh' => null,
+                    'catatan_admin' => null,
+                ]
+            );
 
-        return redirect()->route('pesanan.show', $pesanan)
-            ->with('sukses', 'Pembayaran berhasil dikirim. Mohon tunggu verifikasi admin.');
+            $pesanan->update(['status' => StatusPesanan::MenungguVerifikasi]);
+        });
+
+        $pesan = $metode === MetodePembayaran::Cash
+            ? 'Pilihan bayar di toko dikonfirmasi. Admin akan memverifikasi setelah pembayaran diterima.'
+            : 'Bukti pembayaran berhasil dikirim. Mohon tunggu verifikasi admin.';
+
+        return redirect()->route('pesanan.show', $pesanan)->with('sukses', $pesan);
     }
 }

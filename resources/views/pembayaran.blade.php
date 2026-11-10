@@ -75,44 +75,24 @@
                     <div class="panel-head">
                         <div>
                             <h2>Pilih Metode Pembayaran</h2>
-                            <p class="muted">Transfer bank, QRIS, atau bayar tunai di toko.</p>
+                            <p class="muted">Bayar dengan QRIS atau tunai langsung di toko.</p>
                         </div>
                         <span class="badge badge-warning">{{ $pesanan->status_tampil }}</span>
                     </div>
 
                     <div class="tabs payment-tabs" role="tablist" aria-label="Metode pembayaran">
-                        <button type="button" role="tab" data-tab="transfer" class="active" aria-selected="true">Transfer Bank</button>
-                        <button type="button" role="tab" data-tab="qris" aria-selected="false">QRIS</button>
+                        <button type="button" role="tab" data-tab="qris" class="active" aria-selected="true">QRIS</button>
                         <button type="button" role="tab" data-tab="cash" aria-selected="false">Cash di Toko</button>
                     </div>
 
-                    <div class="tab-panel active" id="tab-transfer" role="tabpanel">
-                        <div class="bank-card">
-                            <span class="bank-label">Bank BCA</span>
-                            <strong class="bank-number">1234567890</strong>
-                            <span>a.n. PW Sewa Jas</span>
-                        </div>
-                        <p class="muted">Transfer sesuai nominal <strong>Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</strong>, lalu unggah bukti transfer.</p>
-
-                        <form method="POST" action="{{ route('pembayaran.store', $pesanan) }}" enctype="multipart/form-data" class="form">
-                            @csrf
-                            <input type="hidden" name="metode" value="transfer">
-                            <div class="field">
-                                <label for="bukti-transfer">Bukti transfer</label>
-                                <input id="bukti-transfer" type="file" name="bukti_pembayaran" accept="image/*" required>
-                                <small class="field-help">Format JPG, PNG, atau WEBP. Maksimal 2 MB.</small>
-                            </div>
-                            <button class="btn btn-primary btn-block" type="submit">Kirim Bukti Transfer</button>
-                        </form>
-                    </div>
-
-                    <div class="tab-panel" id="tab-qris" role="tabpanel">
+                    <div class="tab-panel active" id="tab-qris" role="tabpanel">
                         <div class="qris-card">
-                            <div class="qris-placeholder">
-                                <span>QRIS</span>
-                                <small>Scan untuk membayar</small>
+                            <img class="qris-image" src="{{ asset('images/qris.svg') }}" alt="Kode QRIS PW_SEWAJAS">
+                            <div>
+                                <h3>Scan &amp; bayar</h3>
+                                <p class="muted">Scan kode QRIS di samping menggunakan aplikasi bank atau e-wallet, lalu unggah bukti pembayaran.</p>
+                                <p class="muted">Nominal: <strong>Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</strong></p>
                             </div>
-                            <p class="muted">Scan kode QRIS di atas menggunakan aplikasi bank atau e-wallet, lalu unggah bukti pembayaran.</p>
                         </div>
 
                         <form method="POST" action="{{ route('pembayaran.store', $pesanan) }}" enctype="multipart/form-data" class="form">
@@ -141,7 +121,7 @@
                         <form method="POST" action="{{ route('pembayaran.store', $pesanan) }}" class="form">
                             @csrf
                             <input type="hidden" name="metode" value="cash">
-                            <button class="btn btn-primary btn-block" type="submit">Konfirmasi Akan Bayar di Toko</button>
+                            <button class="btn btn-primary btn-block" type="submit">Konfirmasi Bayar di Toko</button>
                         </form>
                     </div>
                 </div>

@@ -51,6 +51,8 @@ class AlurPenyewaanTest extends TestCase
         return Pesanan::create(array_merge([
             'user_id' => $user->id,
             'jas_id' => $jas->id,
+            'nama_pemesan' => $user->name,
+            'nomor_hp' => $user->nomor_hp,
             'tanggal_pesan' => today(),
             'tanggal_mulai' => now()->addDay()->toDateString(),
             'tanggal_selesai' => now()->addDays(3)->toDateString(),
@@ -103,12 +105,17 @@ class AlurPenyewaanTest extends TestCase
             'jumlah' => 2,
         ]);
 
-        $this->actingAs($customer)->post('/checkout', ['catatan' => 'Tolong disiapkan'])
-            ->assertRedirect(route('pesanan.index'));
+        $this->actingAs($customer)->post('/checkout', [
+            'nama_pemesan' => $customer->name,
+            'nomor_hp' => $customer->nomor_hp,
+            'catatan' => 'Tolong disiapkan',
+        ])->assertRedirect(route('pesanan.show', Pesanan::first()));
 
         $this->assertDatabaseHas('pesanan', [
             'user_id' => $customer->id,
             'jas_id' => $jas->id,
+            'nama_pemesan' => $customer->name,
+            'nomor_hp' => $customer->nomor_hp,
             'jumlah' => 2,
             'status' => StatusPesanan::Pending->value,
         ]);
@@ -125,7 +132,7 @@ class AlurPenyewaanTest extends TestCase
 
         $pembayaran = Pembayaran::create([
             'pesanan_id' => $pesanan->id,
-            'metode' => MetodePembayaran::Transfer,
+            'metode' => MetodePembayaran::Qris,
             'status' => StatusPembayaran::Pending,
             'tanggal_bayar' => now(),
         ]);
@@ -135,7 +142,25 @@ class AlurPenyewaanTest extends TestCase
             ->assertRedirect();
 
         $this->assertSame(StatusPembayaran::Diverifikasi, $pembayaran->fresh()->status);
-        $this->assertSame(StatusPesanan::Disetujui, $pesanan->fresh()->status);
+        $this->assertSame(StatusPesanan::Disewa, $pesanan->fresh()->status);
+    }
+
+    public function test_pengiriman_pembayaran_mengubah_status_menjadi_menunggu_verifikasi(): void
+    {
+        $customer = $this->buatCustomer();
+        $jas = $this->buatJas();
+        $pesanan = $this->buatPesanan($customer, $jas);
+
+        $this->actingAs($customer)->post('/pembayaran/'.$pesanan->id, [
+            'metode' => MetodePembayaran::Cash->value,
+        ])->assertRedirect(route('pesanan.show', $pesanan));
+
+        $this->assertSame(StatusPesanan::MenungguVerifikasi, $pesanan->fresh()->status);
+
+        $pembayaran = $pesanan->fresh()->pembayaran;
+        $this->assertSame(MetodePembayaran::Cash, $pembayaran->metode);
+        $this->assertSame(StatusPembayaran::Pending, $pembayaran->status);
+        $this->assertNull($pembayaran->tanggal_bayar);
     }
 
     public function test_customer_tidak_dapat_melihat_pesanan_orang_lain(): void

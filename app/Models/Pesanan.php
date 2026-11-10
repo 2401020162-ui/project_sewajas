@@ -18,6 +18,8 @@ class Pesanan extends Model
         'user_id',
         'jas_id',
         'admin_id',
+        'nama_pemesan',
+        'nomor_hp',
         'tanggal_pesan',
         'tanggal_mulai',
         'tanggal_selesai',
@@ -27,6 +29,7 @@ class Pesanan extends Model
         'total_harga',
         'status',
         'catatan',
+        'catatan_pengembalian',
     ];
 
     protected function casts(): array
@@ -90,22 +93,26 @@ class Pesanan extends Model
         return max(1, (int) Carbon::parse($this->tanggal_mulai)->diffInDays(Carbon::parse($this->tanggal_selesai)));
     }
 
-    /** Label status yang memperhitungkan status pembayaran. */
+    /** Label status pesanan sesuai alur proposal. */
     public function getStatusTampilAttribute(): string
     {
-        if ($this->status === StatusPesanan::Pending && $this->pembayaran?->status === \App\Enums\StatusPembayaran::Pending) {
-            return 'Menunggu Verifikasi';
-        }
-
         return $this->status->label();
     }
 
     public function getBadgeTampilAttribute(): string
     {
-        if ($this->status === StatusPesanan::Pending && $this->pembayaran?->status === \App\Enums\StatusPembayaran::Pending) {
-            return 'warning';
-        }
-
         return $this->status->badge();
+    }
+
+    /** Nama pemesan yang diisi saat checkout (fallback ke akun). */
+    public function getNamaPemesanTampilAttribute(): string
+    {
+        return $this->nama_pemesan ?: $this->user?->name ?? '-';
+    }
+
+    /** Nomor HP pemesan yang diisi saat checkout (fallback ke akun). */
+    public function getNomorHpTampilAttribute(): string
+    {
+        return $this->nomor_hp ?: $this->user?->nomor_hp ?? '-';
     }
 }

@@ -113,7 +113,7 @@
             </ul>
         </div>
 
-        <div id="kontak">
+        <div>
             <h3>Kontak</h3>
             <ul class="footer-contact">
                 <li><span>Alamat</span>Jl. Merdeka No. 21, Tanjungpinang, Kepulauan Riau</li>

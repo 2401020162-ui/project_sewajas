@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('judul', 'Verifikasi Pembayaran')
-@section('subjudul', 'Periksa bukti pembayaran dan setujui pesanan customer.')
+@section('subjudul', 'Periksa bukti QRIS dan konfirmasi pembayaran Cash customer.')
 
 @section('isi')
 <div class="chips-filter chips-admin">
@@ -17,7 +17,7 @@
         <header class="verify-head">
             <div>
                 <a class="table-link" href="{{ route('admin.pesanan.show', $item->pesanan) }}">{{ $item->pesanan->kode_pesanan }}</a>
-                <small>Dikirim {{ $item->tanggal_bayar?->format('d M Y H:i') ?? '-' }}</small>
+                <small>Diajukan {{ $item->tanggal_bayar?->format('d M Y H:i') ?? $item->created_at->format('d M Y H:i') }}</small>
             </div>
             <div class="verify-head-right">
                 <span class="badge badge-info">{{ $item->metode->label() }}</span>
@@ -28,8 +28,8 @@
         <div class="verify-body">
             <div class="verify-customer">
                 <dl class="detail-list">
-                    <div><dt>Pelanggan</dt><dd>{{ $item->pesanan->user->name }}</dd></div>
-                    <div><dt>No. HP</dt><dd>{{ $item->pesanan->user->nomor_hp ?? '-' }}</dd></div>
+                    <div><dt>Pelanggan</dt><dd>{{ $item->pesanan->nama_pemesan_tampil }}</dd></div>
+                    <div><dt>No. HP</dt><dd>{{ $item->pesanan->nomor_hp_tampil }}</dd></div>
                     <div><dt>Jas</dt><dd>{{ $item->pesanan->jas->nama }} ({{ $item->pesanan->ukuran }}, {{ $item->pesanan->jumlah }} unit)</dd></div>
                     <div><dt>Jadwal</dt><dd>{{ $item->pesanan->tanggal_mulai->format('d M Y') }} – {{ $item->pesanan->tanggal_selesai->format('d M Y') }}</dd></div>
                 </dl>
@@ -50,9 +50,11 @@
         </div>
 
         <footer class="verify-actions">
-            <form method="POST" action="{{ route('admin.verifikasi.setujui', $item) }}" onsubmit="return confirm('Setujui pembayaran ini?')">
+            <form method="POST" action="{{ route('admin.verifikasi.setujui', $item) }}" onsubmit="return confirm('{{ $item->metode === \App\Enums\MetodePembayaran::Cash ? 'Konfirmasi pembayaran cash sudah diterima?' : 'Setujui pembayaran QRIS ini?' }}')">
                 @csrf
-                <button class="btn btn-primary btn-sm" type="submit">Setujui Pembayaran</button>
+                <button class="btn btn-primary btn-sm" type="submit">
+                    {{ $item->metode === \App\Enums\MetodePembayaran::Cash ? 'Konfirmasi Pembayaran Cash' : 'Setujui Pembayaran' }}
+                </button>
             </form>
 
             <form class="reject-form" method="POST" action="{{ route('admin.verifikasi.tolak', $item) }}">

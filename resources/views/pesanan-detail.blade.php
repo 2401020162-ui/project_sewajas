@@ -6,11 +6,11 @@
 @php
     $langkah = [
         ['label' => 'Pesanan dibuat', 'status' => \App\Enums\StatusPesanan::Pending],
-        ['label' => 'Pembayaran disetujui', 'status' => \App\Enums\StatusPesanan::Disetujui],
-        ['label' => 'Sedang disewa', 'status' => \App\Enums\StatusPesanan::Dikirim],
+        ['label' => 'Menunggu verifikasi', 'status' => \App\Enums\StatusPesanan::MenungguVerifikasi],
+        ['label' => 'Disewa', 'status' => \App\Enums\StatusPesanan::Disewa],
         ['label' => 'Selesai', 'status' => \App\Enums\StatusPesanan::Selesai],
     ];
-    $urutan = ['pending' => 0, 'disetujui' => 1, 'dikirim' => 2, 'selesai' => 3];
+    $urutan = ['pending' => 0, 'menunggu_verifikasi' => 1, 'disewa' => 2, 'selesai' => 3];
     $posisi = $urutan[$pesanan->status->value] ?? 0;
     $dibatalkan = $pesanan->status === \App\Enums\StatusPesanan::Dibatalkan;
 @endphp
@@ -54,6 +54,8 @@
                                     <small>
                                         @if($index === 0)
                                             {{ $pesanan->tanggal_pesan->format('d M Y') }}
+                                        @elseif($index === 1 && $pesanan->pembayaran?->tanggal_bayar)
+                                            {{ $pesanan->pembayaran->tanggal_bayar->format('d M Y H:i') }}
                                         @elseif($index === 1 && $pesanan->pembayaran?->tanggal_verifikasi)
                                             {{ $pesanan->pembayaran->tanggal_verifikasi->format('d M Y H:i') }}
                                         @elseif($index === 3 && $pesanan->tanggal_dikembalikan)
@@ -94,7 +96,10 @@
                     <dl class="detail-list">
                         <div><dt>Metode</dt><dd>{{ $pesanan->pembayaran->metode->label() }}</dd></div>
                         <div><dt>Status</dt><dd><span class="badge badge-{{ $pesanan->pembayaran->status->badge() }}">{{ $pesanan->pembayaran->status->label() }}</span></dd></div>
-                        <div><dt>Tanggal bayar</dt><dd>{{ $pesanan->pembayaran->tanggal_bayar?->format('d M Y H:i') ?? '-' }}</dd></div>
+                        <div>
+                            <dt>{{ $pesanan->pembayaran->metode === \App\Enums\MetodePembayaran::Cash ? 'Konfirmasi bayar' : 'Tanggal bayar' }}</dt>
+                            <dd>{{ $pesanan->pembayaran->tanggal_bayar?->format('d M Y H:i') ?? '-' }}</dd>
+                        </div>
                         @if($pesanan->pembayaran->tanggal_verifikasi)
                             <div><dt>Diverifikasi</dt><dd>{{ $pesanan->pembayaran->tanggal_verifikasi->format('d M Y H:i') }}</dd></div>
                         @endif
@@ -124,14 +129,21 @@
                     <p>{{ $pesanan->catatan }}</p>
                 </div>
             @endif
+
+            @if($pesanan->catatan_pengembalian)
+                <div class="panel">
+                    <h2>Kondisi Pengembalian</h2>
+                    <p>{{ $pesanan->catatan_pengembalian }}</p>
+                </div>
+            @endif
         </div>
 
         <aside class="order-summary-panel">
             <h2>Ringkasan</h2>
             <dl class="summary-list">
                 <div><dt>Kode pesanan</dt><dd>{{ $pesanan->kode_pesanan }}</dd></div>
-                <div><dt>Customer</dt><dd>{{ $pesanan->user->name }}</dd></div>
-                <div><dt>No. HP</dt><dd>{{ $pesanan->user->nomor_hp ?? '-' }}</dd></div>
+                <div><dt>Nama pemesan</dt><dd>{{ $pesanan->nama_pemesan_tampil }}</dd></div>
+                <div><dt>No. HP</dt><dd>{{ $pesanan->nomor_hp_tampil }}</dd></div>
                 <div><dt>Durasi</dt><dd>{{ $pesanan->lama_sewa }} hari</dd></div>
                 <div class="summary-total"><dt>Total</dt><dd>Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</dd></div>
             </dl>
